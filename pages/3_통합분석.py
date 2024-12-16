@@ -195,7 +195,7 @@ else:
 
 
 
-col = st.columns((5.5,4.5), gap='medium')
+col = st.columns((5,5), gap='medium')
 
 with col[0]: 
 
