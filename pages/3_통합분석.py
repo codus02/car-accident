@@ -32,15 +32,30 @@ korea_geojson = json.load(open('SIDO_MAP_2022_geoJSON.json', encoding="UTF-8")) 
 
 #######################
 # 데이터 전처리 함수
-def preprocess_data(data, rename_dict):
-    data.rename(columns=rename_dict, inplace=True)
+# 데이터 전처리 함수 수정
+def preprocess_data(data, column_mapping):
+    # 컬럼 확인
+    st.write("Before rename: ", data.columns)
+    
+    # 컬럼 이름 변경
+    data.rename(columns=column_mapping, inplace=True)
+    
+    # 컬럼이 변경되었는지 확인
+    st.write("After rename: ", data.columns)
+
+    # '행정구역' 존재 여부 확인
+    if '행정구역' not in data.columns:
+        st.error("데이터에 '행정구역' 컬럼이 존재하지 않습니다. 확인이 필요합니다.")
+        return pd.DataFrame()  # 빈 데이터프레임 반환
+    
+    # '전국' 제외
     data = data[data['행정구역'] != '전국']
-    data = data.iloc[1:].reset_index(drop=True)
-    data['행정구역'] = data['행정구역'].replace({
-        '강원특별자치도': '강원도', 
-        '전북특별자치도': '전라북도'
-    })
+    data = data.reset_index(drop=True)
     return data
+
+# 함수 호출
+df2 = preprocess_data(df2, {'행정구역별': '행정구역'})
+
 
 # 열 이름 변환 함수
 def rename_columns(columns, prefix):
