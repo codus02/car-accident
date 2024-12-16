@@ -28,7 +28,7 @@ file_path="1인당_자동차_등록대수_시도_시_군_구__20241216183029.csv
 df = pd.read_csv(file_path,  encoding='UTF-8')
 
 # csv 파일 불러오기
-korea_geojson = json.load(open("C:/Users/chaet/Downloads/SIDO_MAP_2022_geoJSON.json", encoding="UTF-8")) # json 파일 불러오기
+korea_geojson = json.load(open('SIDO_MAP_2022_geoJSON.json', encoding="UTF-8")) # json 파일 불러오기
 
 
 #######################
