@@ -131,7 +131,7 @@ with col[1]:
         st.write('''
             - 데이터: [사이트로 이동](https://kosis.kr/statHtml/statHtml.do?orgId=101&tblId=DT_1YL14001&conn_path=D9&vw_cd=MT_GTITLE01)
                  
-            - 연도, 카테고리를 선택하면 해당 연도의 해당 카테고리에 대해 지도와 heatmap으로 관찰할수 있습니다
+            - 카테고리, 지역, 연도를 선택하면 해당 선택 대해 막대그래프와 파이차트를 관찰할수 있습니다
             ''')
         
 
