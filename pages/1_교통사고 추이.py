@@ -23,7 +23,10 @@ st.markdown("<br>", unsafe_allow_html=True)
 st.markdown("<br>", unsafe_allow_html=True)  
 #######################
 # 데이터 불러오기
-df = pd.read_csv("C:/Users/chaet/Downloads/음주운전교통사고비율_시도_시_군_구__20241204193205.csv", encoding='UTF-8') # csv 파일 불러오기
+
+
+file_path="음주운전교통사고비율_시도_시_군_구__20241204193205.csv"
+df = pd.read_csv(file_path,  encoding='UTF-8')
 korea_geojson = json.load(open("C:/Users/chaet/Downloads/SIDO_MAP_2022_geoJSON.json", encoding="UTF-8")) # json 파일 불러오기
 
 
