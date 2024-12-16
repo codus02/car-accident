@@ -25,7 +25,7 @@ file_path="음주운전교통사고비율_시도_시_군_구__20241204193205.csv
 df = pd.read_csv(file_path,  encoding='UTF-8')
 
 file_path2="1인당_자동차_등록대수_시도_시_군_구__20241216183029.csv"
-df2 = pd.read_csv(file_path,  encoding='UTF-8')
+df2 = pd.read_csv(file_path2,  encoding='UTF-8')
 
 
 korea_geojson = json.load(open('SIDO_MAP_2022_geoJSON.json', encoding="UTF-8")) # json 파일 불러오기
