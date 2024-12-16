@@ -42,6 +42,21 @@ def preprocess_data(data, rename_dict):
     })
     return data
 
+def preprocess_data2(data):
+    data.rename(columns={'행정구역별': '행정구역'}, inplace=True)
+    data = data[data['행정구역'] != '전국']
+    data = data.iloc[1:].reset_index(drop=True)
+    data['행정구역'] = data['행정구역'].replace({
+        '강원특별자치도': '강원도', 
+        '전북특별자치도': '전라북도'
+    })
+    return data
+
+df2 = preprocess_data(df2)
+
+
+
+
 # 열 이름 변환 함수
 def rename_columns(columns, prefix):
     new_columns = []
