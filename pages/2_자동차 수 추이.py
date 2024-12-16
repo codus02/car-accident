@@ -24,7 +24,10 @@ st.markdown("<br>", unsafe_allow_html=True)
 
 #######################
 # 데이터 불러오기
-df = pd.read_csv("C:/Users/chaet/Downloads/1인당_자동차_등록대수_시도_시_군_구__20241216182607.csv", encoding='UTF-8') # csv 파일 불러오기
+file_path="1인당_자동차_등록대수_시도_시_군_구__20241216183029.csv"
+df = pd.read_csv(file_path,  encoding='UTF-8')
+
+# csv 파일 불러오기
 korea_geojson = json.load(open("C:/Users/chaet/Downloads/SIDO_MAP_2022_geoJSON.json", encoding="UTF-8")) # json 파일 불러오기
 
 
