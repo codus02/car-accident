@@ -41,7 +41,7 @@ def preprocess_data(data, rename_dict):
         '전북특별자치도': '전라북도'
     })
     return data
-st.write("df2 컬럼 확인: ", df2.columns)
+
 
 
 
