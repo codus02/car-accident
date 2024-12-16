@@ -30,10 +30,11 @@ df2 = pd.read_csv(file_path2,  encoding='UTF-8')
 
 korea_geojson = json.load(open('SIDO_MAP_2022_geoJSON.json', encoding="UTF-8")) # json 파일 불러오기
 
-#######################
-# 데이터 전처리 함수
-def preprocess_data(data, rename_dict):
-    data.rename(columns=rename_dict, inplace=True)
+
+############
+# 데이터 전처리1
+def preprocess_data(data):
+    data.rename(columns={'행정구역별(1)': '행정구역'}, inplace=True)
     data = data[data['행정구역'] != '전국']
     data = data.iloc[1:].reset_index(drop=True)
     data['행정구역'] = data['행정구역'].replace({
@@ -42,25 +43,26 @@ def preprocess_data(data, rename_dict):
     })
     return data
 
+df = preprocess_data(df)
+
+
+
+# 데이터 전처리2
+def preprocess_data2(data):
+    data.rename(columns={'행정구역별': '행정구역'}, inplace=True)
+    data = data[data['행정구역'] != '전국']
+    data = data.iloc[1:].reset_index(drop=True)
+    data['행정구역'] = data['행정구역'].replace({
+        '강원특별자치도': '강원도', 
+        '전북특별자치도': '전라북도'
+    })
+    return data
+
+df2 = preprocess_data2(df2)
 
 
 
 
-
-
-# 열 이름 변환 함수
-def rename_columns(columns, prefix):
-    new_columns = []
-    for col in columns:
-        if col.endswith('.1'):
-            new_columns.append(f"{col.split('.')[0]}_{prefix}등록수")
-        elif col.endswith('.2'):
-            new_columns.append(f"{col.split('.')[0]}_{prefix}인구수")
-        elif col.isdigit():
-            new_columns.append(f"{col}_{prefix}")
-        else:
-            new_columns.append(col)
-    return new_columns
 
 # GeoJSON 매핑
 region_mapping = {
@@ -72,29 +74,83 @@ region_mapping = {
     '경상남도': '48', '제주특별자치도': '50'
 }
 
-#######################
-# 데이터 전처리
-# df: 교통사고 데이터
-df = preprocess_data(df, {'행정구역별(1)': '행정구역'})
-df.columns = rename_columns(df.columns, "교통사고")
 df['code'] = df['행정구역'].map(region_mapping)
+df2['code'] = df2['행정구역'].map(region_mapping)
 
-df = df.melt(id_vars=['행정구역', 'code'], var_name='prop', value_name='accident')
-df[['year', 'category']] = df['prop'].str.split('_', expand=True)
+
+
+
+
+
+
+# 열 이름 변환1
+def rename_columns(columns):
+    new_columns = []
+    for col in columns:
+        if col.endswith('.1'):
+            new_columns.append(f"{col.split('.')[0]}_음주사고수")
+        elif col.endswith('.2'):
+            new_columns.append(f"{col.split('.')[0]}_교통사고수")
+        elif col.isdigit():
+            new_columns.append(f"{col}_음주사고비율")
+        else:
+            new_columns.append(col)
+    return new_columns
+
+df.columns = rename_columns(df.columns)
+
+
+# 열 이름 변환2
+def rename_columns2(columns):
+    new_columns = []
+    for col in columns:
+        if col.endswith('.1'):
+            new_columns.append(f"{col.split('.')[0]}_자동차등록수")
+        elif col.endswith('.2'):
+            new_columns.append(f"{col.split('.')[0]}_인구수")
+        elif col.isdigit():
+            new_columns.append(f"{col}_1인당 자동차수")
+        else:
+            new_columns.append(col)
+    return new_columns
+
+df2.columns = rename_columns2(df2.columns)
+
+
+
+# 데이터 변환1
+df = df.melt(
+    id_vars=['행정구역','code'],
+    var_name='prop',
+    value_name='accident'
+)
+
+if 'prop' in df.columns:
+    df[['year', 'category']] = df['prop'].str.split('_', expand=True)
+
 df.drop('prop', axis=1, inplace=True)
 df['year'] = df['year'].astype(int)
 df['accident'] = pd.to_numeric(df['accident'], errors='coerce')
+df = df.dropna(subset=['accident'])
 
-# df2: 자동차 데이터
-df2 = preprocess_data(df2, {'행정구역별': '행정구역'})
-df2.columns = rename_columns(df2.columns, "자동차")
-df2['code'] = df2['행정구역'].map(region_mapping)
 
-df2 = df2.melt(id_vars=['행정구역', 'code'], var_name='prop', value_name='car')
-df2[['year', 'category']] = df2['prop'].str.split('_', expand=True)
+# 데이터 변환2
+df2 = df2.melt(
+    id_vars=['행정구역','code'],
+    var_name='prop',
+    value_name='car'
+)
+
+if 'prop' in df2.columns:
+    df2[['year', 'category']] = df2['prop'].str.split('_', expand=True)
+
 df2.drop('prop', axis=1, inplace=True)
 df2['year'] = df2['year'].astype(int)
 df2['car'] = pd.to_numeric(df2['car'], errors='coerce')
+df2 = df2.dropna(subset=['car'])
+
+
+
 
 #######################
 # 사이드바 설정
@@ -104,7 +160,6 @@ selected_year = st.sidebar.selectbox("연도를 선택하세요", year_list)
 
 category_b = st.sidebar.selectbox("교통사고 관련 데이터 선택 ", df['category'].unique(), key='category_b')
 category_a = st.sidebar.selectbox("자동차 관련 데이터 선택 ", df2['category'].unique(), key='category_a')
-
 
 #######################
 # 데이터 병합 및 비율 계산
@@ -190,4 +245,3 @@ st.write('''
 
          
          ''')
-
